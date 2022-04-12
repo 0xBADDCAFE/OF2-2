@@ -1,11 +1,13 @@
-import { border, Box, Button, Center, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, SimpleGrid } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import "./App.css";
+import Stopwatch from "./App/Stopwatch";
 
 type Click = {
   number: number;
   x: number;
   y: number;
+  time: number;
 };
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
   const [indicate, setIndicate] = useState(false);
   const [count, setCount] = useState(1);
   const [clicks, setClicks] = useState<Click[]>([]);
+  const [isPlaying, setPlaying] = useState(false);
+  const [startAt, setStartAt] = useState<Date>(new Date());
   const numbers = useMemo(() => {
     const xs = [...Array(25)].map((_, i) => i + 1);
     for (let i = 0; i < xs.length; i++) {
@@ -24,22 +28,41 @@ function App() {
 
   return (
     <Box maxW={640} h="100vh" m="0 auto">
-      <Center mt={8}>
-        <Button
-          m={4}
-          _focus={{ outline: "none" }}
-          onClick={() => {
-            setCount(1);
-            setClicks([]);
-            setPlayId(playId + 1);
+      <Flex mt={8} justifyContent="space-around">
+        <Stopwatch
+          isActive={isPlaying}
+          onStop={(count) => {
+            console.log(count);
           }}
-        >
-          Start / Reset
-        </Button>
-        <Button m={4} _focus={{ outline: "none" }} onClick={() => {}}>
-          Replay
-        </Button>
-      </Center>
+        />
+        <Center>
+          <Button
+            m={4}
+            _focus={{ outline: "none" }}
+            onClick={() => {
+              if (isPlaying) {
+                setPlaying(false);
+              } else {
+                setCount(1);
+                setClicks([]);
+                setPlayId(playId + 1);
+                setPlaying(true);
+                setStartAt(new Date());
+              }
+            }}
+          >
+            {isPlaying ? "Stop" : "Start"}
+          </Button>
+          <Button
+            m={4}
+            disabled={isPlaying || clicks.length == 0}
+            _focus={{ outline: "none" }}
+            onClick={() => {}}
+          >
+            Replay
+          </Button>
+        </Center>
+      </Flex>
       <SimpleGrid
         h="100%"
         w="100%"
@@ -52,58 +75,45 @@ function App() {
         gap={0.5}
         userSelect="none"
       >
-        {numbers.map((n) =>
-          n < count ? (
-            <Center
-              key={n}
-              fontSize={32}
-              _active={indicate ? { transform: "scale(1.2)" } : {}}
-              {...(count > 25
-                ? {
-                    color: "gray.500",
-                  }
-                : {
-                    boxShadow: "0 0 4px rgba(0, 0, 0, 0.5)",
-                  })}
-              transition="all 0.1s"
-              onMouseDown={(ev) => {
+        {numbers.map((n) => (
+          <Center
+            key={n}
+            fontSize={32}
+            onMouseDown={(ev) => {
+              if (!isPlaying) {
+                return;
+              } else if (n < count) {
                 setIndicate(false);
-                setClicks([
-                  ...clicks,
-                  {
-                    number: n,
-                    x: ev.nativeEvent.offsetX,
-                    y: ev.nativeEvent.offsetY,
-                  },
-                ]);
-              }}
-            >
-              {n}
-            </Center>
-          ) : (
-            <Center
-              key={n}
-              fontSize={32}
-              boxShadow="0 0 4px rgba(0, 0, 0, 0.5)"
-              onMouseDown={(ev) => {
-                if (n === count) {
-                  setCount(n + 1);
-                  setIndicate(true);
+              } else if (n === count) {
+                setCount(n + 1);
+                setIndicate(true);
+                if (n === 25) {
+                  setPlaying(false);
                 }
-                setClicks([
-                  ...clicks,
-                  {
-                    number: n,
-                    x: ev.nativeEvent.offsetX,
-                    y: ev.nativeEvent.offsetY,
-                  },
-                ]);
-              }}
-            >
-              {n}
-            </Center>
-          )
-        )}
+              }
+              setClicks([
+                ...clicks,
+                {
+                  number: n,
+                  x: ev.nativeEvent.offsetX,
+                  y: ev.nativeEvent.offsetY,
+                  time: Date.now() - startAt.getTime(),
+                },
+              ]);
+            }}
+            {...(n < count
+              ? {
+                  ...(25 < count
+                    ? { color: "gray.500" }
+                    : { boxShadow: "0 0 4px rgba(0, 0, 0, 0.5)" }),
+                  transition: "all 0.1s",
+                  _active: indicate ? { transform: "scale(1.2)" } : {},
+                }
+              : { boxShadow: "0 0 4px rgba(0, 0, 0, 0.5)" })}
+          >
+            {isPlaying || clicks.length > 0 ? n : null}
+          </Center>
+        ))}
       </SimpleGrid>
     </Box>
   );

@@ -1,7 +1,8 @@
-import { Box, Button, Center, Flex, SimpleGrid } from "@chakra-ui/react";
+import { Box, Center, Flex, SimpleGrid } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import "./App.css";
 import Stopwatch from "./App/Stopwatch";
+import StyledButton from "./shared/StyledButton";
 
 type Click = {
   number: number;
@@ -38,9 +39,8 @@ function App() {
           }}
         />
         <Center>
-          <Button
+          <StyledButton
             m={4}
-            _focus={{ outline: "none" }}
             onClick={() => {
               if (playState === "playing") {
                 setPlayState("stop");
@@ -54,15 +54,14 @@ function App() {
             }}
           >
             {playState === "playing" ? "Stop" : "Start"}
-          </Button>
-          <Button
+          </StyledButton>
+          <StyledButton
             m={4}
             disabled={playState !== "finish"}
-            _focus={{ outline: "none" }}
             onClick={() => {}}
           >
             Replay
-          </Button>
+          </StyledButton>
         </Center>
       </Flex>
       <Box
@@ -104,7 +103,7 @@ function App() {
               }}
               {...(playState !== "playing"
                 ? {
-                    color: "gray.500",
+                    color: "gray.300",
                     transition: "all 0.1s",
                     _active: indicate ? { transform: "scale(1.2)" } : {},
                   }
@@ -123,7 +122,7 @@ function App() {
           ))}
         </SimpleGrid>
         {playState === "playing" ? null : (
-          <Box
+          <Center
             w="100%"
             h="100%"
             bgColor="rgba(0, 0, 0, 0.1)"
@@ -131,7 +130,12 @@ function App() {
             left={0}
             top={0}
             boxShadow="0 0 4px rgba(0, 0, 0, 0.5)"
-          />
+            // backdropFilter="blur(2px)"
+            flexDirection="column"
+            justifyContent="space-evenly"
+          >
+            <StyledButton bg="#fff">Submit</StyledButton>
+          </Center>
         )}
       </Box>
     </Box>

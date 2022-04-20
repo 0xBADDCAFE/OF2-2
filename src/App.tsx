@@ -10,12 +10,14 @@ type Click = {
   time: number;
 };
 
+type PlayState = "prepare" | "playing" | "finish" | "stop";
+
 function App() {
   const [playId, setPlayId] = useState(0); // generate by server
   const [indicate, setIndicate] = useState(false);
   const [count, setCount] = useState(1);
   const [clicks, setClicks] = useState<Click[]>([]);
-  const [isPlaying, setPlaying] = useState(false);
+  const [playState, setPlayState] = useState<PlayState>("prepare");
   const [startAt, setStartAt] = useState<Date>(new Date());
   const numbers = useMemo(() => {
     const xs = [...Array(25)].map((_, i) => i + 1);
@@ -30,7 +32,7 @@ function App() {
     <Box maxW={640} h="100%" m="0 auto">
       <Flex mt={8} justifyContent="space-around">
         <Stopwatch
-          isActive={isPlaying}
+          isActive={playState === "playing"}
           onStop={(count) => {
             console.log(count);
           }}
@@ -40,22 +42,22 @@ function App() {
             m={4}
             _focus={{ outline: "none" }}
             onClick={() => {
-              if (isPlaying) {
-                setPlaying(false);
+              if (playState === "playing") {
+                setPlayState("stop");
               } else {
                 setCount(1);
                 setClicks([]);
                 setPlayId(playId + 1);
-                setPlaying(true);
+                setPlayState("playing");
                 setStartAt(new Date());
               }
             }}
           >
-            {isPlaying ? "Stop" : "Start"}
+            {playState === "playing" ? "Stop" : "Start"}
           </Button>
           <Button
             m={4}
-            disabled={isPlaying || clicks.length == 0}
+            disabled={playState !== "finish"}
             _focus={{ outline: "none" }}
             onClick={() => {}}
           >
@@ -79,7 +81,7 @@ function App() {
               key={n}
               fontSize={32}
               onMouseDown={(ev) => {
-                if (!isPlaying) {
+                if (playState !== "playing") {
                   return;
                 } else if (n < count) {
                   setIndicate(false);
@@ -87,7 +89,7 @@ function App() {
                   setCount(n + 1);
                   setIndicate(true);
                   if (n === 25) {
-                    setPlaying(false);
+                    setPlayState("finish");
                   }
                 }
                 setClicks([
@@ -100,21 +102,27 @@ function App() {
                   },
                 ]);
               }}
-              {...(n < count
+              {...(playState !== "playing"
                 ? {
-                    ...(25 < count
-                      ? { color: "gray.500" }
-                      : { boxShadow: "0 0 4px rgba(0, 0, 0, 0.5)" }),
+                    color: "gray.500",
                     transition: "all 0.1s",
                     _active: indicate ? { transform: "scale(1.2)" } : {},
                   }
-                : { boxShadow: "0 0 4px rgba(0, 0, 0, 0.5)" })}
+                : {
+                    boxShadow: "0 0 4px rgba(0, 0, 0, 0.5)",
+                    ...(n < count
+                      ? {
+                          transition: "all 0.1s",
+                          _active: indicate ? { transform: "scale(1.2)" } : {},
+                        }
+                      : {}),
+                  })}
             >
-              {isPlaying || clicks.length > 0 ? n : null}
+              {playState !== "prepare" ? n : null}
             </Center>
           ))}
         </SimpleGrid>
-        {isPlaying ? null : (
+        {playState === "playing" ? null : (
           <Box
             w="100%"
             h="100%"
@@ -122,6 +130,7 @@ function App() {
             position="absolute"
             left={0}
             top={0}
+            boxShadow="0 0 4px rgba(0, 0, 0, 0.5)"
           />
         )}
       </Box>

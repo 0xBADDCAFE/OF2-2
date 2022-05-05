@@ -1,3 +1,5 @@
+/src/firebase/config.ts
+
 # Yarn v3
 .yarn/
 !.yarn/releases/*

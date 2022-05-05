@@ -1,15 +1,10 @@
 import { Box, Center, Flex, SimpleGrid } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import "./App.css";
+import ResultSubmitButton from "./App/ResultSubmitButton";
+import SignInScreen from "./App/SignInScreen";
 import Stopwatch from "./App/Stopwatch";
 import StyledButton from "./shared/StyledButton";
-
-type Click = {
-  number: number;
-  x: number;
-  y: number;
-  time: number;
-};
 
 type PlayState = "prepare" | "playing" | "finish" | "stop";
 
@@ -28,6 +23,9 @@ function App() {
     }
     return xs;
   }, [playId]);
+
+  const score = (): Score => ({ numbers, clicks });
+  const onSubmitComplete = () => {};
 
   return (
     <Box maxW={640} h="100%" m="0 auto">
@@ -134,10 +132,15 @@ function App() {
             flexDirection="column"
             justifyContent="space-evenly"
           >
-            <StyledButton bg="#fff">Submit</StyledButton>
+            <ResultSubmitButton
+              score={playState === "finish" ? { numbers, clicks } : null}
+              onComplete={onSubmitComplete}
+            />
           </Center>
         )}
       </Box>
+      {/* <Box mt={8}>Profile</Box> */}
+      <SignInScreen />
     </Box>
   );
 }

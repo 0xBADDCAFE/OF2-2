@@ -7,7 +7,7 @@ type Props = {
 };
 const Stopwatch: React.VFC<Props> = ({ isActive, onStop }) => {
   const [time, setTime] = useState(0);
-  const startSet = useRef<{ from: Date; tId: number } | null>(null);
+  const startSet = useRef<{ from: Date; tId: NodeJS.Timer } | null>(null);
   useEffect(() => {
     if (isActive) {
       if (startSet.current === null) {

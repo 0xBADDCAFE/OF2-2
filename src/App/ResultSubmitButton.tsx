@@ -1,6 +1,7 @@
 import { useState } from "react";
 import StyledButton from "../shared/StyledButton";
 import doc from "../firebase/firestore";
+import { useToast } from "@chakra-ui/react";
 
 type Props = {
   score: Score | null;
@@ -17,15 +18,26 @@ const ButtonLabel = new Map<SubmitState, string>([
 const ResultSubmitButton: React.VFC<Props> = ({ score, onComplete }) => {
   // This state should initialized when unmount with playing new game
   const [submitState, setSubmitState] = useState<SubmitState>("ready");
+  const toast = useToast();
   return score ? (
     <StyledButton
       bg="#fff"
       _disabled={{ opacity: 1, color: "gray.400", bg: "gray.100" }}
-      disabled={submitState !== "ready"}
+      isLoading={submitState === "submitting"}
+      disabled={submitState === "complete"}
       onClick={async () => {
         setSubmitState("submitting");
         console.log("Submit");
-        await doc.addScore(score);
+        try {
+          const docId = await doc.addScore(score);
+        } catch {
+          toast({
+            title: "Submit error.",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
         setSubmitState("complete");
         onComplete();
       }}

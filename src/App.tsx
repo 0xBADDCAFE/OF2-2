@@ -29,7 +29,7 @@ function App() {
 
   return (
     <Box maxW={640} h="100%" m="0 auto">
-      <Flex mt={8} justifyContent="space-around">
+      <Flex mt={8} justifyContent="space-between">
         <Stopwatch
           isActive={playState === "playing"}
           onStop={(count) => {

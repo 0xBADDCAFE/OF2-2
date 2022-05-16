@@ -2,8 +2,8 @@ import { Box, Center, Flex, SimpleGrid } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import "./App.css";
 import ResultSubmitButton from "./App/ResultSubmitButton";
-import SignInScreen from "./App/SignInScreen";
 import Stopwatch from "./App/Stopwatch";
+import UserScreen from "./App/UserScreen";
 import StyledButton from "./shared/StyledButton";
 
 type PlayState = "prepare" | "playing" | "finish" | "stop";
@@ -139,8 +139,7 @@ function App() {
           </Center>
         )}
       </Box>
-      {/* <Box mt={8}>Profile</Box> */}
-      <SignInScreen />
+      <UserScreen />
     </Box>
   );
 }

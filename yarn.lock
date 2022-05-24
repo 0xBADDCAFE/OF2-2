@@ -3092,6 +3092,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"idb@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "idb@npm:7.0.1"
+  checksum: 61526789562cc3518a1a030c7a06cc98edfcd62795700ff28c701d6f84c178aee4e98bedfc79e6c394ba26084aa4667d6594b1728e5868f305f9b34148662679
+  languageName: node
+  linkType: hard
+
 "immediate@npm:~3.0.5":
   version: 3.0.6
   resolution: "immediate@npm:3.0.6"
@@ -3538,6 +3545,7 @@ __metadata:
     "@vitejs/plugin-react": ^1.0.7
     firebase: ~9
     framer-motion: ^6
+    idb: ^7.0.1
     react: ^17.0.2
     react-dom: ^17.0.2
     react-firebaseui: ^6.0.0

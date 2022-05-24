@@ -1,10 +1,13 @@
 import { Box, Center, Flex, SimpleGrid } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import ResultSubmitButton from "./App/ResultSubmitButton";
 import Stopwatch from "./App/Stopwatch";
 import UserScreen from "./App/UserScreen";
+import { firebase } from "./firebase/app";
+import doc from "./firebase/firestore";
 import StyledButton from "./shared/StyledButton";
+import { addScore } from "./browser/indexed-db";
 
 type PlayState = "prepare" | "playing" | "finish" | "stop";
 
@@ -24,7 +27,30 @@ function App() {
     return xs;
   }, [playId]);
 
-  const score = (): Score => ({ numbers, clicks });
+  const [user, setUser] = useState<firebase.User | null>();
+
+  useEffect(() => {
+    const unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged(async (user) => {
+        console.log(user?.uid);
+        if (user?.uid) {
+          const docUser = await doc.getUser(user.uid);
+          console.log(docUser);
+          if (docUser === null) {
+            await doc.setUser(user.uid, {
+              displayName: user.displayName ?? "",
+            });
+            // await doc.addUser({
+            //   displayName: user.displayName ?? "",
+            // });
+          }
+        }
+        return setUser(user);
+      });
+    return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
+  }, []);
+
   const onSubmitComplete = () => {};
 
   return (
@@ -87,6 +113,8 @@ function App() {
                   setIndicate(true);
                   if (n === 25) {
                     setPlayState("finish");
+                    // userId is placeholder to share Score type with firestore
+                    addScore({ userId: user?.uid ?? "", numbers, clicks });
                   }
                 }
                 setClicks([
@@ -132,14 +160,20 @@ function App() {
             flexDirection="column"
             justifyContent="space-evenly"
           >
-            <ResultSubmitButton
-              score={playState === "finish" ? { numbers, clicks } : null}
-              onComplete={onSubmitComplete}
-            />
+            {user ? (
+              <ResultSubmitButton
+                score={
+                  playState === "finish"
+                    ? { userId: user.uid, numbers, clicks }
+                    : null
+                }
+                onComplete={onSubmitComplete}
+              />
+            ) : null}
           </Center>
         )}
       </Box>
-      <UserScreen />
+      <UserScreen user={user} setUser={setUser} />
     </Box>
   );
 }

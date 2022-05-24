@@ -6,6 +6,11 @@ type Click = {
 };
 
 type Score = {
+  userId: string;
   numbers: number[];
   clicks: Click[];
+};
+
+type User = {
+  displayName: string;
 };

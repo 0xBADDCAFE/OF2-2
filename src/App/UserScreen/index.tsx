@@ -10,22 +10,16 @@ import {
   Text,
 } from "@chakra-ui/react";
 import "firebase/compat/auth";
-import { useEffect, useState } from "react";
 import { firebase } from "../../firebase/app";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
 
-const UserScreen = () => {
-  const [user, setUser] = useState<firebase.User | null>();
+type Props = {
+  user: firebase.User | null | undefined;
+  setUser: (user: firebase.User) => void;
+};
 
-  // Listen to the Firebase Auth state and set the local state.
-  useEffect(() => {
-    const unregisterAuthObserver = firebase
-      .auth()
-      .onAuthStateChanged((user) => setUser(user));
-    return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
-  }, []);
-
+const UserScreen: React.VFC<Props> = ({ user, setUser }) => {
   return user === undefined ? null : user ? (
     <Box mt={8}>
       <Text>Username: {user.displayName}</Text>

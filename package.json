@@ -13,6 +13,7 @@
     "@emotion/styled": "^11",
     "firebase": "~9",
     "framer-motion": "^6",
+    "idb": "^7.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-firebaseui": "^6.0.0",

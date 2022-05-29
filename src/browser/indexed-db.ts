@@ -6,11 +6,6 @@ const DB_OS_NAMES = {
   scores: "scores",
 };
 
-type DBData<T> = {
-  data: T;
-  createdAt: Date;
-};
-
 const db = await openDB(DB_NAME, DB_VERSION, {
   upgrade: (upgradeDB, oldVersion) => {
     switch (oldVersion) {
@@ -24,13 +19,6 @@ const db = await openDB(DB_NAME, DB_VERSION, {
 });
 
 const addScore = async (score: Score) => {
-  const rawCol = {
-    userId: "aaa",
-    numbers: [],
-    clicks: [],
-    createdAt: new Date(),
-  };
-
   const tx = db.transaction(DB_OS_NAMES.scores, "readwrite");
   const store = tx.objectStore(DB_OS_NAMES.scores);
   await store.add({ ...score, createdAt: new Date() });

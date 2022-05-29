@@ -1,6 +1,6 @@
 import { useState } from "react";
 import StyledButton from "../shared/StyledButton";
-import doc from "../firebase/firestore";
+import * as doc from "../firebase/firestore";
 import { useToast } from "@chakra-ui/react";
 
 type Props = {
@@ -29,7 +29,7 @@ const ResultSubmitButton: React.VFC<Props> = ({ score, onComplete }) => {
         setSubmitState("submitting");
         console.log("Submit");
         try {
-          const docId = await doc.addScore(score);
+          const docRef = await doc.addScore(score);
         } catch {
           toast({
             title: "Submit error.",

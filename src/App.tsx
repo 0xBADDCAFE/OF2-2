@@ -5,7 +5,7 @@ import ResultSubmitButton from "./App/ResultSubmitButton";
 import Stopwatch from "./App/Stopwatch";
 import UserScreen from "./App/UserScreen";
 import { firebase } from "./firebase/app";
-import doc from "./firebase/firestore";
+import * as doc from "./firebase/firestore";
 import StyledButton from "./shared/StyledButton";
 // import { addScore } from "./browser/indexed-db";
 

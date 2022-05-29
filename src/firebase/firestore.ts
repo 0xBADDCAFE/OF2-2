@@ -10,38 +10,53 @@ import {
   CollectionReference,
   DocumentReference,
   setDoc,
+  DocumentSnapshot,
 } from "firebase/firestore";
 import { app } from "./app";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+type CollectionName = "scores" | "users";
+type DBRow<T> = T & { createdAt: Date };
+
 // Initialize Firebase
 const db = getFirestore(app);
 
 const addScore = async (score: Score) => {
   try {
-    const docRef = await addDoc(collection(db, "scores"), {
+    const docRef = await addDoc(createCollection<DBRow<Score>>("scores"), {
       ...score,
-      created_at: serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
     console.log("Document written with ID: ", docRef.id);
-    return docRef.id;
+    return docRef;
   } catch (e) {
     console.error("Error adding document: ", e);
     throw e;
   }
 };
 
+const setScore = async (
+  docSnap: DocumentSnapshot<DBRow<Score>>,
+  score: Score
+) => {
+  await setDoc(
+    createDoc(createCollection<DBRow<Score>>("scores"), docSnap.id),
+    score
+  );
+};
+
 const setUser = async (id: string, user: User) => {
   await setDoc(createDoc(createCollection<User>("users"), id), user);
 };
 
+// unused
 const addUser = async (user: User) => {
   try {
     const docRef = await addDoc(collection(db, "users"), {
       ...user,
-      created_at: serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
     console.log("Document written with ID: ", docRef.id);
     return docRef.id;
@@ -73,7 +88,7 @@ const getUser = async (id: string): Promise<User | null> => {
 
 // https://firebase.google.com/docs/firestore/data-model
 // https://javascript.plainenglish.io/using-firestore-with-typescript-in-the-v9-sdk-cf36851bb099
-const createCollection = <T = DocumentData>(collectionName: string) => {
+const createCollection = <T = DocumentData>(collectionName: CollectionName) => {
   return collection(db, collectionName) as CollectionReference<T>;
 };
 // https://stackoverflow.com/a/53143568
@@ -95,4 +110,4 @@ const createDoc: CreateDocSignature = <T>(
   }
 };
 
-export default { addScore, addUser, setUser, getUser };
+export { addScore, setScore, addUser, setUser, getUser };

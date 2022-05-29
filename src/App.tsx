@@ -7,7 +7,7 @@ import UserScreen from "./App/UserScreen";
 import { firebase } from "./firebase/app";
 import doc from "./firebase/firestore";
 import StyledButton from "./shared/StyledButton";
-import { addScore } from "./browser/indexed-db";
+// import { addScore } from "./browser/indexed-db";
 
 type PlayState = "prepare" | "playing" | "finish" | "stop";
 
@@ -114,7 +114,8 @@ function App() {
                   if (n === 25) {
                     setPlayState("finish");
                     // userId is placeholder to share Score type with firestore
-                    addScore({ userId: user?.uid ?? "", numbers, clicks });
+                    // Temporally disable local score because of avoid redundant with servers
+                    // addScore({ userId: user?.uid ?? "", numbers, clicks });
                   }
                 }
                 setClicks([

@@ -5,7 +5,6 @@ import { useToast } from "@chakra-ui/react";
 
 type Props = {
   score: Score | null;
-  onComplete: () => void;
 };
 
 type SubmitState = "ready" | "submitting" | "complete";
@@ -15,7 +14,7 @@ const ButtonLabel = new Map<SubmitState, string>([
   ["complete", "Complete"],
 ]);
 
-const ResultSubmitButton: React.VFC<Props> = ({ score, onComplete }) => {
+const ResultSubmitButton: React.VFC<Props> = ({ score }) => {
   // This state should initialized when unmount with playing new game
   const [submitState, setSubmitState] = useState<SubmitState>("ready");
   const toast = useToast();
@@ -39,7 +38,6 @@ const ResultSubmitButton: React.VFC<Props> = ({ score, onComplete }) => {
           });
         }
         setSubmitState("complete");
-        onComplete();
       }}
     >
       {ButtonLabel.get(submitState)}

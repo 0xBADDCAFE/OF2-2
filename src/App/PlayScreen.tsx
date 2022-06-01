@@ -1,5 +1,5 @@
 import { Box, Center, Flex, SimpleGrid } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { firebase } from "../firebase/app";
 import StyledButton from "../shared/StyledButton";
 import NumberCell from "./NumberCell";
@@ -24,6 +24,29 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
     }
     return xs;
   }, [playId]);
+
+  const onClickCell = useCallback(
+    (n: number) => (c: { x: number; y: number; at: number }) => {
+      if (n === count) {
+        setCount(n + 1);
+        if (n === 25) {
+          setPlayState("finish");
+          // userId is placeholder to share Score type with firestore
+          // Temporally disable local score because of avoid redundant with servers
+          // addScore({ userId: user?.uid ?? "", numbers, clicks });
+        }
+      }
+
+      const click: Click = {
+        number: n,
+        x: c.x,
+        y: c.y,
+        time: c.at - startAt.getTime(),
+      };
+      setClicks([...clicks, click]);
+    },
+    [count]
+  );
 
   return (
     <>
@@ -74,14 +97,10 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
           {numbers.map((n) => (
             <NumberCell
               key={n}
-              playState={playState}
-              setPlayState={setPlayState}
-              count={count}
-              setCount={setCount}
               n={n}
-              clicks={clicks}
-              setClicks={setClicks}
-              startAt={startAt}
+              count={count}
+              playState={playState}
+              onClick={onClickCell(n)}
             />
           ))}
         </SimpleGrid>

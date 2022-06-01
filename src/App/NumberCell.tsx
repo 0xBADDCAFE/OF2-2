@@ -3,27 +3,15 @@ import { useState } from "react";
 // import { addScore } from "./browser/indexed-db";
 
 type Props = {
-  playState: PlayState;
-  setPlayState: (playState: PlayState) => void;
   n: number;
   count: number;
-  setCount: (count: number) => void;
-  clicks: Click[];
-  setClicks: (clicks: Click[]) => void;
-  startAt: Date;
+  playState: PlayState;
+  onClick: (c: { x: number; y: number; at: number }) => void;
 };
 
-const NumberCell: React.VFC<Props> = ({
-  playState,
-  setPlayState,
-  n,
-  count,
-  setCount,
-  clicks,
-  setClicks,
-  startAt,
-}) => {
+const NumberCell: React.VFC<Props> = ({ n, count, playState, onClick }) => {
   const [indicate, setIndicate] = useState(false);
+
   return (
     <Center
       fontSize={32}
@@ -33,24 +21,13 @@ const NumberCell: React.VFC<Props> = ({
         } else if (n < count) {
           setIndicate(false);
         } else if (n === count) {
-          setCount(n + 1);
           setIndicate(true);
-          if (n === 25) {
-            setPlayState("finish");
-            // userId is placeholder to share Score type with firestore
-            // Temporally disable local score because of avoid redundant with servers
-            // addScore({ userId: user?.uid ?? "", numbers, clicks });
-          }
         }
-        setClicks([
-          ...clicks,
-          {
-            number: n,
-            x: ev.nativeEvent.offsetX,
-            y: ev.nativeEvent.offsetY,
-            time: Date.now() - startAt.getTime(),
-          },
-        ]);
+        onClick({
+          x: ev.nativeEvent.offsetX,
+          y: ev.nativeEvent.offsetY,
+          at: Date.now(),
+        });
       }}
       {...(playState !== "playing"
         ? {

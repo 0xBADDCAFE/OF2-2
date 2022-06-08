@@ -7,7 +7,7 @@ type Props = {
   n: number;
   count: number;
   playState: PlayState;
-  replayPoint: { x: number; y: number } | null;
+  replayPoints: { x: number; y: number }[] | null;
   onClick: (c: { x: number; y: number; at: number }) => void;
 };
 
@@ -17,7 +17,7 @@ const NumberCell: React.VFC<Props> = ({
   n,
   count,
   playState,
-  replayPoint,
+  replayPoints,
   onClick,
 }) => {
   const [indicate, setIndicate] = useState(false);
@@ -71,22 +71,25 @@ const NumberCell: React.VFC<Props> = ({
           })}
     >
       {playState !== "prepare" ? n : null}
-      {replayPoint ? (
-        <Box
-          as="span"
-          w={`${RIPPLE_RADIUS_PX * 2}px`}
-          h={`${RIPPLE_RADIUS_PX * 2}px`}
-          bgColor="blackAlpha.200"
-          position="absolute"
-          borderRadius="100%"
-          pointerEvents="none"
-          transform="scale(0.1)"
-          // opacity={1}
-          left={`${replayPoint.x - RIPPLE_RADIUS_PX}px`}
-          top={`${replayPoint.y - RIPPLE_RADIUS_PX}px`}
-          animation={`${rippleKeyframes} 0.5s ease-out`}
-        />
-      ) : null}
+      {replayPoints
+        ? replayPoints.map((p, i) => (
+            <Box
+              key={i}
+              as="span"
+              w={`${RIPPLE_RADIUS_PX * 2}px`}
+              h={`${RIPPLE_RADIUS_PX * 2}px`}
+              bgColor="blackAlpha.200"
+              position="absolute"
+              borderRadius="100%"
+              pointerEvents="none"
+              transform="scale(0.1)"
+              // opacity={1}
+              left={`${p.x - RIPPLE_RADIUS_PX}px`}
+              top={`${p.y - RIPPLE_RADIUS_PX}px`}
+              animation={`${rippleKeyframes} 0.5s ease-out`}
+            />
+          ))
+        : null}
     </Center>
   );
 };

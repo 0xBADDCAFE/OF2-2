@@ -52,12 +52,15 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
 
   const [replayer] = useReplay();
   const [replayPoints, setReplayPoints] = useState<
-    Map<number, { x: number; y: number }>
+    Map<number, { x: number; y: number }[]>
   >(new Map());
   useEffect(() => {
     if (playState === "replay") {
       replayer.setReplay(clicks, (c) => {
-        setReplayPoints(new Map(replayPoints.set(c.number, { ...c })));
+        const numberPoints = replayPoints.get(c.number) ?? [];
+        setReplayPoints(
+          new Map(replayPoints.set(c.number, [...numberPoints, { ...c }]))
+        );
       });
     } else {
       replayer.clearReplay();
@@ -126,7 +129,7 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
               n={n}
               count={count}
               playState={playState}
-              replayPoint={replayPoints.get(n) ?? null}
+              replayPoints={replayPoints.get(n) ?? null}
               onClick={onClickCell(n, count)}
             />
           ))}

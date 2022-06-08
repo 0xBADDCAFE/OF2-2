@@ -61,6 +61,7 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
       });
     } else {
       replayer.clearReplay();
+      setReplayPoints(new Map());
     }
   }, [playState]);
 
@@ -100,7 +101,6 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
                 setPlayState("replay");
               } else {
                 setPlayState("finish");
-                setReplayPoints(new Map());
               }
             }}
           >

@@ -1,10 +1,12 @@
 import { Box, Center, Flex, SimpleGrid } from "@chakra-ui/react";
-import React, { useCallback, useMemo, useState } from "react";
-import { firebase } from "../firebase/app";
-import StyledButton from "../shared/StyledButton";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { firebase } from "../../firebase/app";
+import StyledButton from "../../shared/StyledButton";
 import NumberCell from "./NumberCell";
-import ResultSubmitButton from "./ResultSubmitButton";
-import Stopwatch from "./Stopwatch";
+import ResultSubmitButton from "../ResultSubmitButton";
+import Stopwatch from "../Stopwatch";
+import { useReplay } from "./hooks";
+import { subunion } from "../../function";
 
 type Props = {
   user: firebase.User | null | undefined;
@@ -26,7 +28,7 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
   }, [playId]);
 
   const onClickCell = useCallback(
-    (n: number) => (c: { x: number; y: number; at: number }) => {
+    (n: number, count: number) => (c: { x: number; y: number; at: number }) => {
       if (n === count) {
         setCount(n + 1);
         if (n === 25) {
@@ -43,10 +45,24 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
         y: c.y,
         time: c.at - startAt.getTime(),
       };
-      setClicks([...clicks, click]);
+      setClicks((clicks) => [...clicks, click]);
     },
-    [count]
+    [startAt]
   );
+
+  const [replayer] = useReplay();
+  const [replayPoints, setReplayPoints] = useState<
+    Map<number, { x: number; y: number }>
+  >(new Map());
+  useEffect(() => {
+    if (playState === "replay") {
+      replayer.setReplay(clicks, (c) => {
+        setReplayPoints(new Map(replayPoints.set(c.number, { ...c })));
+      });
+    } else {
+      replayer.clearReplay();
+    }
+  }, [playState]);
 
   return (
     <>
@@ -76,10 +92,19 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
           </StyledButton>
           <StyledButton
             m={4}
-            disabled={playState !== "finish"}
-            onClick={() => {}}
+            disabled={
+              !subunion<PlayState>("replay", "finish").includes(playState)
+            }
+            onClick={() => {
+              if (playState !== "replay") {
+                setPlayState("replay");
+              } else {
+                setPlayState("finish");
+                setReplayPoints(new Map());
+              }
+            }}
           >
-            Replay
+            {playState !== "replay" ? "Replay" : "Stop"}
           </StyledButton>
         </Center>
       </Flex>
@@ -100,11 +125,12 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
               n={n}
               count={count}
               playState={playState}
-              onClick={onClickCell(n)}
+              replayPoint={replayPoints.get(n) ?? null}
+              onClick={onClickCell(n, count)}
             />
           ))}
         </SimpleGrid>
-        {playState === "playing" ? null : (
+        {subunion<PlayState>("playing", "replay").includes(playState) ? null : (
           <Center
             w="100%"
             h="100%"

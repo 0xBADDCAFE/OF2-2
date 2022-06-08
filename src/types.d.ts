@@ -15,4 +15,4 @@ type User = {
   displayName: string;
 };
 
-type PlayState = "prepare" | "playing" | "finish" | "stop";
+type PlayState = "prepare" | "playing" | "finish" | "stop" | "replay";

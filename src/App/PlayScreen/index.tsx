@@ -63,6 +63,7 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
       replayer.clearReplay();
       setReplayPoints(new Map());
     }
+    return replayer.clearReplay;
   }, [playState]);
 
   return (

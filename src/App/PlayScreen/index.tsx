@@ -1,12 +1,20 @@
 import { Box, Center, Flex, SimpleGrid } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { DocumentReference } from "firebase/firestore";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { firebase } from "../../firebase/app";
+import { DBRow } from "../../firebase/firestore";
+import { subunion } from "../../function";
 import StyledButton from "../../shared/StyledButton";
-import NumberCell from "./NumberCell";
 import ResultSubmitButton from "../ResultSubmitButton";
 import Stopwatch from "../Stopwatch";
 import { useReplay } from "./hooks";
-import { subunion } from "../../function";
+import NumberCell from "./NumberCell";
 
 type Props = {
   user: firebase.User | null | undefined;
@@ -18,6 +26,7 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
   const [clicks, setClicks] = useState<Click[]>([]);
   const [playState, setPlayState] = useState<PlayState>("prepare");
   const [startAt, setStartAt] = useState<Date>(new Date());
+  const scoreDocRef = useRef<DocumentReference<DBRow<Score>>>();
   const numbers = useMemo(() => {
     const xs = [...Array(25)].map((_, i) => i + 1);
     for (let i = 0; i < xs.length; i++) {
@@ -150,10 +159,11 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
             {user ? (
               <ResultSubmitButton
                 score={
-                  playState === "finish"
+                  playState === "finish" && !scoreDocRef.current
                     ? { userId: user.uid, numbers, clicks }
                     : null
                 }
+                onSubmitted={(docRef) => (scoreDocRef.current = docRef)}
               />
             ) : null}
           </Center>

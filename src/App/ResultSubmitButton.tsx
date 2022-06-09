@@ -1,10 +1,12 @@
-import { useState } from "react";
-import StyledButton from "../shared/StyledButton";
-import * as doc from "../firebase/firestore";
 import { useToast } from "@chakra-ui/react";
+import { DocumentReference } from "firebase/firestore";
+import { useState } from "react";
+import * as doc from "../firebase/firestore";
+import StyledButton from "../shared/StyledButton";
 
 type Props = {
   score: Score | null;
+  onSubmitted: (docRef: DocumentReference<doc.DBRow<Score>>) => void;
 };
 
 type SubmitState = "ready" | "submitting" | "complete";
@@ -14,7 +16,7 @@ const ButtonLabel = new Map<SubmitState, string>([
   ["complete", "Complete"],
 ]);
 
-const ResultSubmitButton: React.VFC<Props> = ({ score }) => {
+const ResultSubmitButton: React.VFC<Props> = ({ score, onSubmitted }) => {
   // This state should initialized when unmount with playing new game
   const [submitState, setSubmitState] = useState<SubmitState>("ready");
   const toast = useToast();
@@ -28,7 +30,7 @@ const ResultSubmitButton: React.VFC<Props> = ({ score }) => {
         setSubmitState("submitting");
         console.log("Submit");
         try {
-          const docRef = await doc.addScore(score);
+          onSubmitted(await doc.addScore(score));
         } catch {
           toast({
             title: "Submit error.",

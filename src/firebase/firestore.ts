@@ -18,7 +18,7 @@ import { app } from "./app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 type CollectionName = "scores" | "users";
-type DBRow<T> = T & { createdAt: Date };
+export type DBRow<T> = T & { createdAt: Date };
 
 // Initialize Firebase
 const db = getFirestore(app);

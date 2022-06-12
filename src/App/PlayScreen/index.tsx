@@ -26,7 +26,9 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
   const [clicks, setClicks] = useState<Click[]>([]);
   const [playState, setPlayState] = useState<PlayState>("prepare");
   const [startAt, setStartAt] = useState<Date>(new Date());
-  const scoreDocRef = useRef<DocumentReference<DBRow<Score>>>();
+  // Submit 直後はボタンコンポーネント側で disabled 表示に
+  // したいので useState を使わない（= submit 時に更新しない）
+  const scoreDocRef = useRef<DocumentReference<DBRow<Score>> | null>(null);
   const numbers = useMemo(() => {
     const xs = [...Array(25)].map((_, i) => i + 1);
     for (let i = 0; i < xs.length; i++) {
@@ -99,6 +101,7 @@ const PlayScreen: React.VFC<Props> = ({ user }) => {
                 setPlayId(playId + 1);
                 setPlayState("playing");
                 setStartAt(new Date());
+                scoreDocRef.current = null;
               }
             }}
           >

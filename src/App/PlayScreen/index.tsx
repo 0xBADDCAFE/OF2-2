@@ -1,4 +1,4 @@
-import { Box, Center, Flex, SimpleGrid } from "@chakra-ui/react";
+import { Box, Center, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { DocumentReference } from "firebase/firestore";
 import React, {
   useCallback,
@@ -10,6 +10,7 @@ import React, {
 import { DBRow } from "../../firebase/firestore";
 import { subunion } from "../../function";
 import StyledButton from "../../shared/StyledButton";
+import StyledLink from "../../shared/StyledLink";
 import { useUser } from "../hooks";
 import ResultSubmitButton from "../ResultSubmitButton";
 import Stopwatch from "../Stopwatch";
@@ -171,6 +172,18 @@ const PlayScreen: React.VFC<Props> = () => {
               />
             ) : null}
           </Center>
+        )}
+      </Box>
+      <Box mt={8}>
+        {user ? (
+          <Text>
+            Username: <StyledLink to="user">{user.displayName}</StyledLink>
+          </Text>
+        ) : (
+          <Text>
+            <StyledLink to="user">サインインまたはサインアップ</StyledLink>
+            で結果を送信
+          </Text>
         )}
       </Box>
     </>

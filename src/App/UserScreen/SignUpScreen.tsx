@@ -47,7 +47,6 @@ const SignUpScreen: React.VFC<Props> = ({ onRegistered }) => {
           const user = credential.user;
           if (user) {
             await updateProfile(user, { displayName: values.signUpName });
-            // Workaround to show displayName
             onRegistered({ ...user, displayName: values.signUpName });
           }
         } catch (e) {

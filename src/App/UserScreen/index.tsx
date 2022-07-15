@@ -1,17 +1,26 @@
 import {
   Box,
-  Button,
+  chakra,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Heading,
+  HStack,
+  Input,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
+  useToast,
 } from "@chakra-ui/react";
-import { getAuth } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+import { getAuth, updateProfile } from "firebase/auth";
 import "firebase/compat/auth";
+import { useCallback } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import app from "../../firebase/app";
+import StyledButton from "../../shared/StyledButton";
 import { useUser } from "../hooks";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
@@ -21,14 +30,72 @@ type Props = {
   // setUser: (user: firebase.User) => void;
 };
 
+type Inputs = {
+  username: string;
+};
+
 const UserScreen: React.VFC<Props> = () => {
   const [user, setUser] = useUser();
-  return user === undefined ? null : user ? (
+  const toast = useToast();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm<Inputs>({ defaultValues: { username: user?.displayName ?? "" } });
+
+  const onValid = useCallback<SubmitHandler<Inputs>>(async (values) => {
+    console.log(values);
+    try {
+      if (user) {
+        await updateProfile(user, { displayName: values.username });
+        setUser({ ...user, displayName: values.username });
+        toast({ title: "Updated" });
+      }
+    } catch (e) {
+      console.error(e);
+      if (e instanceof FirebaseError) {
+        toast({
+          title: "Username cannot change.",
+          status: "error",
+          description: e.message,
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    }
+  }, []);
+
+  return user ? (
     <Box mt={8}>
-      <Text>Username: {user.displayName}</Text>
-      <Button mt={4} onClick={() => getAuth(app).signOut()}>
+      <chakra.form onSubmit={handleSubmit(onValid)}>
+        <HStack>
+          <FormControl isInvalid={!!errors.username}>
+            <HStack>
+              <FormLabel htmlFor="username">Username:</FormLabel>
+              <Input
+                variant="flushed"
+                id="username"
+                {...register("username", {
+                  required: "This is required",
+                })}
+              />
+              <FormErrorMessage>
+                {errors.username && errors.username.message}
+              </FormErrorMessage>
+            </HStack>
+          </FormControl>
+          <StyledButton
+            type="submit"
+            variant="outline"
+            isLoading={isSubmitting}
+          >
+            Update
+          </StyledButton>
+        </HStack>
+      </chakra.form>
+      <StyledButton mt={4} onClick={() => getAuth(app).signOut()}>
         Sign out
-      </Button>
+      </StyledButton>
     </Box>
   ) : (
     <Box mt={16}>
@@ -43,7 +110,12 @@ const UserScreen: React.VFC<Props> = () => {
             <SignInScreen />
           </TabPanel>
           <TabPanel>
-            <SignUpScreen onRegistered={(user) => setUser(user)} />
+            <SignUpScreen
+              onRegistered={(user) => {
+                // Workaround to show displayName
+                return setUser(user);
+              }}
+            />
           </TabPanel>
         </TabPanels>
       </Tabs>

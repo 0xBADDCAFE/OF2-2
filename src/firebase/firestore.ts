@@ -75,7 +75,6 @@ const getUser = async (id: string): Promise<User | null> => {
     // const docSnap = await getDoc(createDoc<User>(`users/${id}`));
 
     if (docSnap.exists()) {
-      console.log(docSnap.data());
       return docSnap.data();
     } else {
       return null;

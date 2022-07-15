@@ -1,4 +1,4 @@
-import { getAuth, User } from "firebase/auth";
+import { getAuth, signOut, User } from "firebase/auth";
 import * as doc from "../firebase/firestore";
 import app from "./app";
 
@@ -6,8 +6,7 @@ const onAuthStateChanged = (callback: (user: User | null) => void) =>
   getAuth(app).onAuthStateChanged(async (user) => {
     if (user?.uid) {
       const docUser = await doc.getUser(user.uid);
-      console.log(docUser);
-      if (docUser === null) {
+      if (docUser === null || docUser.displayName !== user.displayName) {
         await doc.setUser(user.uid, {
           displayName: user.displayName ?? "",
         });
@@ -20,4 +19,6 @@ const onAuthStateChanged = (callback: (user: User | null) => void) =>
     callback(user);
   });
 
-export { onAuthStateChanged };
+const signOutUser = () => signOut(getAuth(app));
+
+export { onAuthStateChanged, signOutUser };

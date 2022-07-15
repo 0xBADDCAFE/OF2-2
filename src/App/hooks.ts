@@ -12,7 +12,7 @@ const useUser = (): [User | null, Dispatch<SetStateAction<User | null>>] => {
   useEffect(
     () =>
       onAuthStateChanged((user) => {
-        console.log(user);
+        // console.log(user);
         setUser(user);
       }),
     []

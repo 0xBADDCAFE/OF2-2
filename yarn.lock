@@ -578,6 +578,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chakra-ui/icon@npm:3.0.4":
+  version: 3.0.4
+  resolution: "@chakra-ui/icon@npm:3.0.4"
+  dependencies:
+    "@chakra-ui/utils": 2.0.4
+  peerDependencies:
+    "@chakra-ui/system": ">=2.0.0-next.0"
+    react: ">=18"
+  checksum: 6f9866237abb19e8e46d716eddf331d1c31e4ab397f64ae14a485c046a182a8c88357a2d06982bad8f8d74cc6067262d97d870df0860d14c8eb6ad60efb98953
+  languageName: node
+  linkType: hard
+
+"@chakra-ui/icons@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@chakra-ui/icons@npm:2.0.4"
+  dependencies:
+    "@chakra-ui/icon": 3.0.4
+    "@types/react": ^18.0.1
+  peerDependencies:
+    "@chakra-ui/system": ">=2.0.0-next.0"
+    react: ">=18"
+  checksum: 522467b23576acddac3fb2afbd9043d3586024a4128954eb1e149c8e89e99d1843ff5279b8d5835b88db95a5b8ac56be5a93db2a46ae5049d98565d935730e84
+  languageName: node
+  linkType: hard
+
 "@chakra-ui/image@npm:1.1.10":
   version: 1.1.10
   resolution: "@chakra-ui/image@npm:1.1.10"
@@ -1142,6 +1167,18 @@ __metadata:
     framesync: 5.3.0
     lodash.mergewith: 4.6.2
   checksum: a97bf839b6569c1b420825fcab4a0b9d599d0c3752839cd01d72f4b8c2191e32da72a10727a84f5b13784ee1985083412c98855c25a42427dfb28290f37e8214
+  languageName: node
+  linkType: hard
+
+"@chakra-ui/utils@npm:2.0.4":
+  version: 2.0.4
+  resolution: "@chakra-ui/utils@npm:2.0.4"
+  dependencies:
+    "@types/lodash.mergewith": 4.6.6
+    css-box-model: 1.2.1
+    framesync: 5.3.0
+    lodash.mergewith: 4.6.2
+  checksum: 5e16c78695bef0a026fe0b7cc4158488609a0405bd7e7ab7151d692c38b6b6d238ef5c2639d7fe881e416385701777eac4b48851b25eeda14a87df9084151842
   languageName: node
   linkType: hard
 
@@ -2111,6 +2148,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: ebee02778ca08f954c316dc907802264e0121c87b8fa2e7e0156ab0ef2a1b0a09d968c016a3600ec4c9a17dc09b4274f292d9b15a1a5369bb7e4072def82808f
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.0.1":
+  version: 18.0.15
+  resolution: "@types/react@npm:18.0.15"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: e22cc388d1c145aa184787e44dc28db4789976c704cd5db475c170bb76a560eb81def5f346cfe750949bb3d43ad88822b8cbb9f19b1286e3795892a8263e7715
   languageName: node
   linkType: hard
 
@@ -3568,6 +3616,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "of2-2@workspace:."
   dependencies:
+    "@chakra-ui/icons": ^2.0.4
     "@chakra-ui/react": ^1.8.8
     "@emotion/react": ^11
     "@emotion/styled": ^11

@@ -7,20 +7,21 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { firebase } from "../../firebase/app";
 import { DBRow } from "../../firebase/firestore";
 import { subunion } from "../../function";
 import StyledButton from "../../shared/StyledButton";
+import { useUser } from "../hooks";
 import ResultSubmitButton from "../ResultSubmitButton";
 import Stopwatch from "../Stopwatch";
 import { useReplay } from "./hooks";
 import NumberCell from "./NumberCell";
 
 type Props = {
-  user: firebase.User | null | undefined;
+  // user: firebase.User | null | undefined;
 };
 
-const PlayScreen: React.VFC<Props> = ({ user }) => {
+const PlayScreen: React.VFC<Props> = () => {
+  const [user] = useUser();
   const [playId, setPlayId] = useState(0); // generate by server
   const [count, setCount] = useState(1);
   const [clicks, setClicks] = useState<Click[]>([]);

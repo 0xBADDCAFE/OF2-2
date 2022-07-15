@@ -12,7 +12,7 @@ import {
   setDoc,
   DocumentSnapshot,
 } from "firebase/firestore";
-import { app } from "./app";
+import app from "./app";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

@@ -278,6 +278,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.16.7, @babel/runtime@npm:^7.7.6":
+  version: 7.18.3
+  resolution: "@babel/runtime@npm:7.18.3"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: db8526226aa02cfa35a5a7ac1a34b5f303c62a1f000c7db48cb06c6290e616483e5036ab3c4e7a84d0f3be6d4e2148d5fe5cec9564bf955f505c3e764b83d7f1
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.16.7":
   version: 7.16.7
   resolution: "@babel/template@npm:7.16.7"
@@ -2021,6 +2030,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/react-location@npm:^3.7.4":
+  version: 3.7.4
+  resolution: "@tanstack/react-location@npm:3.7.4"
+  dependencies:
+    "@babel/runtime": ^7.16.7
+    history: ^5.2.0
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 54dfa1c7d9f1be080ec63f392bb8f3e724ef194e8a6b3b044328efd1917913fbf27ce7e18af3e6a2eabd6fa7741e1242a4ea1fdd259aebee8ff8b9eaf6f2893e
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -3030,6 +3052,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"history@npm:^5.2.0":
+  version: 5.3.0
+  resolution: "history@npm:5.3.0"
+  dependencies:
+    "@babel/runtime": ^7.7.6
+  checksum: d73c35df49d19ac172f9547d30a21a26793e83f16a78386d99583b5bf1429cc980799fcf1827eb215d31816a6600684fba9686ce78104e23bd89ec239e7c726f
+  languageName: node
+  linkType: hard
+
 "hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
@@ -3540,6 +3571,7 @@ __metadata:
     "@chakra-ui/react": ^1.8.8
     "@emotion/react": ^11
     "@emotion/styled": ^11
+    "@tanstack/react-location": ^3.7.4
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
     "@vitejs/plugin-react": ^1.0.7

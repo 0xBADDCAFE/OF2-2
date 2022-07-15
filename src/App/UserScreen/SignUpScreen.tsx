@@ -8,11 +8,17 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FirebaseError } from "firebase/app";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+  User,
+} from "firebase/auth";
 import { useForm } from "react-hook-form";
-import { firebase } from "../../firebase/app";
+import app from "../../firebase/app";
 
 type Props = {
-  onRegistered: (user: firebase.User) => void;
+  onRegistered: (user: User) => void;
 };
 
 type Inputs = {
@@ -33,15 +39,14 @@ const SignUpScreen: React.VFC<Props> = ({ onRegistered }) => {
     <form
       onSubmit={handleSubmit(async (values) => {
         try {
-          const credential = await firebase
-            .auth()
-            .createUserWithEmailAndPassword(
-              `${values.signUpUserId}@0xbd.cf`,
-              values.signUpPassword
-            );
+          const credential = await createUserWithEmailAndPassword(
+            getAuth(app),
+            `${values.signUpUserId}@0xbd.cf`,
+            values.signUpPassword
+          );
           const user = credential.user;
           if (user) {
-            await user.updateProfile({ displayName: values.signUpName });
+            await updateProfile(user, { displayName: values.signUpName });
             // Workaround to show displayName
             onRegistered({ ...user, displayName: values.signUpName });
           }

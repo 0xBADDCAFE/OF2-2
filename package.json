@@ -11,6 +11,7 @@
     "@chakra-ui/react": "^1.8.8",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@tanstack/react-location": "^3.7.4",
     "firebase": "~9",
     "framer-motion": "^6",
     "idb": "^7.0.1",

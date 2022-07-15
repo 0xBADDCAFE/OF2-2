@@ -9,21 +9,24 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
+import { getAuth } from "firebase/auth";
 import "firebase/compat/auth";
-import { firebase } from "../../firebase/app";
+import app from "../../firebase/app";
+import { useUser } from "../hooks";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
 
 type Props = {
-  user: firebase.User | null | undefined;
-  setUser: (user: firebase.User) => void;
+  // user: firebase.User | null | undefined;
+  // setUser: (user: firebase.User) => void;
 };
 
-const UserScreen: React.VFC<Props> = ({ user, setUser }) => {
+const UserScreen: React.VFC<Props> = () => {
+  const [user, setUser] = useUser();
   return user === undefined ? null : user ? (
     <Box mt={8}>
       <Text>Username: {user.displayName}</Text>
-      <Button mt={4} onClick={() => firebase.auth().signOut()}>
+      <Button mt={4} onClick={() => getAuth(app).signOut()}>
         Sign out
       </Button>
     </Box>

@@ -5,6 +5,7 @@ import {
   Router,
 } from "@tanstack/react-location";
 import { User } from "firebase/auth";
+import LeaderboardScreen from "./App/LeaderboardScreen";
 import PlayScreen from "./App/PlayScreen";
 import UserScreen from "./App/UserScreen";
 import { onAuthStateChanged } from "./firebase/auth";
@@ -42,6 +43,10 @@ const routes: Route<LocationGenerics>[] = [
     loader: async () => ({
       user: await loadUser(),
     }),
+  },
+  {
+    path: "leaderboard",
+    element: <LeaderboardScreen />,
   },
 ];
 

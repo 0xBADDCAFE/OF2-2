@@ -66,7 +66,7 @@ const UserScreen: React.VFC<Props> = () => {
   }, []);
 
   return user ? (
-    <Box mt={8}>
+    <Box mt={8} ms={2} me={2}>
       <chakra.form onSubmit={handleSubmit(onValid)}>
         <HStack>
           <FormControl isInvalid={!!errors.username}>
@@ -98,7 +98,7 @@ const UserScreen: React.VFC<Props> = () => {
       </StyledButton>
     </Box>
   ) : (
-    <Box mt={16}>
+    <Box mt={8}>
       <Heading size="md">サインインまたはサインアップで結果を送信</Heading>
       <Tabs mt={2} isFitted>
         <TabList>

@@ -4,8 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 type Props = {
   isActive: boolean;
   onStop: (count: number) => void;
-};
-const Stopwatch: React.VFC<Props> = ({ isActive, onStop }) => {
+} & React.ComponentProps<typeof Center>;
+const Stopwatch: React.VFC<Props> = ({ isActive, onStop, ...styles }) => {
   const [time, setTime] = useState(0);
   const startSet = useRef<{ from: Date; tId: NodeJS.Timer } | null>(null);
   useEffect(() => {
@@ -28,7 +28,7 @@ const Stopwatch: React.VFC<Props> = ({ isActive, onStop }) => {
   }, [isActive]);
 
   return (
-    <Center minW={16} m={4}>
+    <Center minW={16} {...styles}>
       {(time / 1000).toFixed(3)}s
     </Center>
   );

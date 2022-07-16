@@ -1,4 +1,9 @@
-import { ArrowUpIcon, HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
+import {
+  EditIcon,
+  HamburgerIcon,
+  SunIcon,
+  TriangleUpIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   chakra,
@@ -26,7 +31,9 @@ function App() {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Heading color="gray.600">2 号の 2 号</Heading>
+          <Heading color="gray.600">
+            <Link to="/">2 号の 2 号</Link>
+          </Heading>
           <Menu>
             <MenuButton
               as={IconButton}
@@ -37,14 +44,13 @@ function App() {
             />
             <MenuList>
               <Link to="/">
-                <MenuItem icon={<ArrowUpIcon />} command="⌘T">
-                  Play
-                </MenuItem>
+                <MenuItem icon={<SunIcon />}>Play</MenuItem>
               </Link>
               <Link to="user">
-                <MenuItem icon={<SettingsIcon />} command="⌘N">
-                  User
-                </MenuItem>
+                <MenuItem icon={<EditIcon />}>User</MenuItem>
+              </Link>
+              <Link to="leaderboard">
+                <MenuItem icon={<TriangleUpIcon />}>Leaderboard</MenuItem>
               </Link>
             </MenuList>
           </Menu>

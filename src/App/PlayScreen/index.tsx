@@ -86,6 +86,7 @@ const PlayScreen: React.VFC<Props> = () => {
     <>
       <Flex mt={8} justifyContent="space-between">
         <Stopwatch
+          ms={2}
           isActive={playState === "playing"}
           onStop={(count) => {
             console.log(count);
@@ -93,7 +94,7 @@ const PlayScreen: React.VFC<Props> = () => {
         />
         <Center>
           <StyledButton
-            m={4}
+            me={4}
             onClick={() => {
               if (playState === "playing") {
                 setPlayState("stop");
@@ -110,7 +111,7 @@ const PlayScreen: React.VFC<Props> = () => {
             {playState === "playing" ? "Stop" : "Start"}
           </StyledButton>
           <StyledButton
-            m={4}
+            me={2}
             disabled={
               !subunion<PlayState>("replay", "finish").includes(playState)
             }
@@ -174,7 +175,7 @@ const PlayScreen: React.VFC<Props> = () => {
           </Center>
         )}
       </Box>
-      <Box mt={8}>
+      <Box mt={4} ms={2} me={2}>
         {user ? (
           <Text>
             Username: <StyledLink to="user">{user.displayName}</StyledLink>

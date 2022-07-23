@@ -166,7 +166,12 @@ const PlayScreen: React.VFC<Props> = () => {
               <ResultSubmitButton
                 score={
                   playState === "finish" && !scoreDocRef.current
-                    ? { userId: user.uid, numbers, clicks }
+                    ? {
+                        userId: user.uid,
+                        numbers,
+                        clicks,
+                        finishTime: clicks.slice(-1)[0].time,
+                      }
                     : null
                 }
                 onSubmitted={(docRef) => (scoreDocRef.current = docRef)}

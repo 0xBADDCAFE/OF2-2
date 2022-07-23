@@ -15,7 +15,12 @@ type Props = {
 };
 
 export type LocationGenerics = MakeGenerics<{
-  LoaderData: { user: User | null };
+  LoaderData: {
+    user: User | null;
+  };
+  Search: {
+    p?: number;
+  };
 }>;
 
 const location = new ReactLocation<LocationGenerics>();

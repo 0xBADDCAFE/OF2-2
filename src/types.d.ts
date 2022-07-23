@@ -9,6 +9,7 @@ type Score = {
   userId: string;
   numbers: number[];
   clicks: Click[];
+  finishTime: number;
 };
 
 type User = {

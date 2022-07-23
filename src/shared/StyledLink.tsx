@@ -12,6 +12,7 @@ const StyledLink = (props: Props) => (
     color="teal.300"
     _hover={{ color: "teal.500", textDecorationLine: "underline" }}
     _visited={{ color: "teal.500" }}
+    _disabled={{ color: "gray.300" }}
     {...props}
   />
 );

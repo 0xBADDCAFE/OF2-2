@@ -2,15 +2,19 @@
 import {
   addDoc,
   collection,
-  doc,
-  getDoc,
-  getFirestore,
-  serverTimestamp,
-  DocumentData,
   CollectionReference,
+  doc,
+  DocumentData,
   DocumentReference,
-  setDoc,
   DocumentSnapshot,
+  getDoc,
+  getDocs,
+  getFirestore,
+  limit,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
 } from "firebase/firestore";
 import app from "./app";
 
@@ -45,6 +49,25 @@ const setScore = async (
     createDoc(createCollection<DBRow<Score>>("scores"), docSnap.id),
     score
   );
+};
+
+const getScores = async (page: number) => {
+  // TODO: Paging
+  try {
+    const q = query(
+      createCollection<DBRow<Score>>("scores"),
+      orderBy("finishTime", "asc"),
+      limit(100)
+    );
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs
+      .slice((page - 1) * 10, page * 10)
+      .map((d) => d.data());
+  } catch (e) {
+    console.error("Error getting scores: ", e);
+    throw e;
+  }
 };
 
 const setUser = async (id: string, user: User) => {
@@ -109,4 +132,4 @@ const createDoc: CreateDocSignature = <T>(
   }
 };
 
-export { addScore, setScore, addUser, setUser, getUser };
+export { addScore, setScore, getScores, addUser, setUser, getUser };

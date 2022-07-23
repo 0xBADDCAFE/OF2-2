@@ -14,6 +14,7 @@ type Score = {
 
 type User = {
   displayName: string;
+  comment: string;
 };
 
 type PlayState = "prepare" | "playing" | "finish" | "stop" | "replay";

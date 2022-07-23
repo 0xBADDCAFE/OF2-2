@@ -24,6 +24,7 @@ import StyledButton from "../../shared/StyledButton";
 import { useUser } from "../hooks";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
+import * as doc from "../../firebase/firestore";
 
 type Props = {
   // user: firebase.User | null | undefined;
@@ -32,6 +33,7 @@ type Props = {
 
 type Inputs = {
   username: string;
+  comment: string;
 };
 
 const UserScreen: React.VFC<Props> = () => {
@@ -49,6 +51,10 @@ const UserScreen: React.VFC<Props> = () => {
       if (user) {
         await updateProfile(user, { displayName: values.username });
         setUser({ ...user, displayName: values.username });
+        doc.setUser(user.uid, {
+          displayName: values.username,
+          comment: values.comment,
+        });
         toast({ title: "Updated" });
       }
     } catch (e) {
@@ -68,31 +74,40 @@ const UserScreen: React.VFC<Props> = () => {
   return user ? (
     <Box mt={8} ms={2} me={2}>
       <chakra.form onSubmit={handleSubmit(onValid)}>
-        <HStack>
-          <FormControl isInvalid={!!errors.username}>
-            <HStack>
-              <FormLabel htmlFor="username">Username:</FormLabel>
-              <Input
-                variant="flushed"
-                id="username"
-                {...register("username", {
-                  required: "This is required",
-                })}
-              />
-              <FormErrorMessage>
-                {errors.username && errors.username.message}
-              </FormErrorMessage>
-            </HStack>
-          </FormControl>
-          <StyledButton
-            type="submit"
-            variant="outline"
-            isLoading={isSubmitting}
-          >
-            Update
-          </StyledButton>
-        </HStack>
+        <FormControl isInvalid={!!errors.username}>
+          <HStack>
+            <FormLabel htmlFor="username">Username:</FormLabel>
+            <Input
+              variant="flushed"
+              id="username"
+              {...register("username", {
+                required: "This is required",
+              })}
+            />
+            <FormErrorMessage>
+              {errors.username && errors.username.message}
+            </FormErrorMessage>
+          </HStack>
+        </FormControl>
+        <FormControl isInvalid={!!errors.comment}>
+          <HStack>
+            <FormLabel htmlFor="comment">Comment:</FormLabel>
+            <Input variant="flushed" id="comment" {...register("comment")} />
+            <FormErrorMessage>
+              {errors.comment && errors.comment.message}
+            </FormErrorMessage>
+          </HStack>
+        </FormControl>
+        <StyledButton
+          mt={4}
+          type="submit"
+          variant="outline"
+          isLoading={isSubmitting}
+        >
+          Update
+        </StyledButton>
       </chakra.form>
+      <chakra.hr mt={4} />
       <StyledButton mt={4} onClick={() => getAuth(app).signOut()}>
         Sign out
       </StyledButton>

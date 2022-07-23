@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useSearch } from "@tanstack/react-location";
 import { useEffect, useState } from "react";
-import { DBRow, getScores } from "../../firebase/firestore";
+import { DBRow, getScores, getUser } from "../../firebase/firestore";
 import { LocationGenerics } from "../../routes";
 import StyledLink from "../../shared/StyledLink";
 
@@ -20,17 +20,26 @@ const LeaderboardScreen = () => {
   const { p } = useSearch<LocationGenerics>();
   const page = p ?? 1;
   const [scores, setScores] = useState<DBRow<Score>[]>();
+  const [users, setUsers] = useState<(User | null)[]>();
 
   useEffect(() => {
     (async () => {
-      setScores(await getScores(page));
+      const newScores = await getScores(page);
+      setScores(newScores);
+      setUsers(
+        await Promise.all(
+          newScores.map((score) => {
+            return getUser(score.userId);
+          })
+        )
+      );
     })();
   }, [page]);
 
   return (
     <Box mt={8} ms={4} me={4}>
       <TableContainer>
-        <Table variant="striped" size="sm" colorScheme="gray">
+        <Table variant="simple" size="sm" colorScheme="gray">
           <Thead>
             <Tr>
               <Th>Rank</Th>
@@ -42,11 +51,14 @@ const LeaderboardScreen = () => {
           <Tbody>
             {scores && scores.length !== 0 ? (
               scores.map((score, i) => (
-                <Tr key={score.createdAt + score.userId}>
+                <Tr
+                  key={score.createdAt + score.userId}
+                  _hover={{ bgColor: "rgba(0,0,0,0.05)" }}
+                >
                   <Td>{(page - 1) * 10 + i + 1}</Td>
-                  <Td>{score.userId}</Td>
+                  <Td>{users?.[i]?.displayName ?? ""}</Td>
                   <Td>{score.finishTime / 1000}s</Td>
-                  <Td isNumeric>user.comment</Td>
+                  <Td>{users?.[i]?.comment ?? ""}</Td>
                 </Tr>
               ))
             ) : (
@@ -57,7 +69,7 @@ const LeaderboardScreen = () => {
           </Tbody>
         </Table>
       </TableContainer>
-      <Flex justifyContent="space-between">
+      <Flex mt={2} justifyContent="space-between" userSelect="none">
         <StyledLink
           replace={true}
           {...(page !== 1

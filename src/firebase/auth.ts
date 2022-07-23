@@ -9,6 +9,7 @@ const onAuthStateChanged = (callback: (user: User | null) => void) =>
       if (docUser === null || docUser.displayName !== user.displayName) {
         await doc.setUser(user.uid, {
           displayName: user.displayName ?? "",
+          comment: "",
         });
         // await doc.addUser({
         //   displayName: user.displayName ?? "",

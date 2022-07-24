@@ -41,7 +41,7 @@ const SignUpScreen: React.VFC<Props> = ({ onRegistered }) => {
         try {
           const credential = await createUserWithEmailAndPassword(
             getAuth(app),
-            `${values.signUpUserId}@0xbd.cf`,
+            `${values.signUpUserId}@dummy.0xbd.cf`,
             values.signUpPassword
           );
           const user = credential.user;

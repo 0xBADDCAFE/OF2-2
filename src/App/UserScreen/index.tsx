@@ -48,8 +48,13 @@ const UserScreen: React.VFC<Props> = () => {
 
   useEffect(() => {
     (async () => {
-      const userMeta = await doc.getUser(user?.uid ?? "");
-      setValue("comment", userMeta?.comment ?? "");
+      if (user) {
+        // Workaround for after sign up
+        setValue("username", user.displayName ?? "");
+
+        const userMeta = await doc.getUser(user.uid);
+        setValue("comment", userMeta?.comment ?? "");
+      }
     })();
   }, [user]);
 
@@ -57,6 +62,7 @@ const UserScreen: React.VFC<Props> = () => {
     console.log(values);
     try {
       if (user) {
+        // FIXME: Dirty update
         await updateProfile(user, { displayName: values.username });
         setUser({ ...user, displayName: values.username });
         doc.setUser(user.uid, {
@@ -122,7 +128,9 @@ const UserScreen: React.VFC<Props> = () => {
     </Box>
   ) : (
     <Box mt={8}>
-      <Heading size="md">サインインまたはサインアップで結果を送信</Heading>
+      <Heading size="md" color="gray.600">
+        サインインまたはサインアップで結果を送信
+      </Heading>
       <Tabs mt={2} isFitted>
         <TabList>
           <Tab _focus={{ outline: "none" }}>Sign in</Tab>

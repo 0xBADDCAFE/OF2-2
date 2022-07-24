@@ -51,7 +51,9 @@ const setScore = async (
   );
 };
 
-const getScores = async (page: number) => {
+const getScores = async (
+  page: number
+): Promise<[scores: DBRow<Score>[], total: number]> => {
   // TODO: Paging
   try {
     const q = query(
@@ -61,9 +63,10 @@ const getScores = async (page: number) => {
     );
     const querySnapshot = await getDocs(q);
 
-    return querySnapshot.docs
-      .slice((page - 1) * 10, page * 10)
-      .map((d) => d.data());
+    return [
+      querySnapshot.docs.slice((page - 1) * 10, page * 10).map((d) => d.data()),
+      querySnapshot.size,
+    ];
   } catch (e) {
     console.error("Error getting scores: ", e);
     throw e;

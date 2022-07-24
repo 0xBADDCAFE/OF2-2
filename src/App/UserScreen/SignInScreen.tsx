@@ -55,7 +55,7 @@ const SignInScreen: React.VFC<Props> = ({}) => {
           try {
             await signInWithEmailAndPassword(
               getAuth(app),
-              `${values.signInUserId}@0xbd.cf`,
+              `${values.signInUserId}@dummy.0xbd.cf`,
               values.signInPassword
             );
           } catch (e) {

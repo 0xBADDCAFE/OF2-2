@@ -20,12 +20,14 @@ const LeaderboardScreen = () => {
   const { p } = useSearch<LocationGenerics>();
   const page = p ?? 1;
   const [scores, setScores] = useState<DBRow<Score>[]>();
+  const [scoresTotal, setScoresTotal] = useState<number>(0);
   const [users, setUsers] = useState<(User | null)[]>();
 
   useEffect(() => {
     (async () => {
-      const newScores = await getScores(page);
+      const [newScores, total] = await getScores(page);
       setScores(newScores);
+      setScoresTotal(total);
       setUsers(
         await Promise.all(
           newScores.map((score) => {
@@ -82,7 +84,7 @@ const LeaderboardScreen = () => {
         </StyledLink>
         <StyledLink
           replace={true}
-          {...(page !== 10
+          {...(page < scoresTotal / 10 && page < 10
             ? {
                 search: { p: page + 1 },
               }

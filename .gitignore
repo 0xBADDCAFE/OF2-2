@@ -1,4 +1,5 @@
 /src/firebase/config.ts
+/.firebaserc
 
 # Yarn v3
 .yarn/

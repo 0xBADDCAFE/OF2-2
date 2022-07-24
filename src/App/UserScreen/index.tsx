@@ -17,14 +17,14 @@ import {
 import { FirebaseError } from "firebase/app";
 import { getAuth, updateProfile } from "firebase/auth";
 import "firebase/compat/auth";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import app from "../../firebase/app";
+import * as doc from "../../firebase/firestore";
 import StyledButton from "../../shared/StyledButton";
 import { useUser } from "../hooks";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
-import * as doc from "../../firebase/firestore";
 
 type Props = {
   // user: firebase.User | null | undefined;
@@ -42,8 +42,16 @@ const UserScreen: React.VFC<Props> = () => {
   const {
     handleSubmit,
     register,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<Inputs>({ defaultValues: { username: user?.displayName ?? "" } });
+
+  useEffect(() => {
+    (async () => {
+      const userMeta = await doc.getUser(user?.uid ?? "");
+      setValue("comment", userMeta?.comment ?? "");
+    })();
+  }, [user]);
 
   const onValid = useCallback<SubmitHandler<Inputs>>(async (values) => {
     console.log(values);

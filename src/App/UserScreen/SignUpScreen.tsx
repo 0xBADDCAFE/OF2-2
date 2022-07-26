@@ -10,12 +10,11 @@ import {
 import { FirebaseError } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
-  getAuth,
   updateProfile,
   User,
 } from "firebase/auth";
 import { useForm } from "react-hook-form";
-import app from "../../firebase/app";
+import { auth } from "../../firebase/auth";
 
 type Props = {
   onRegistered: (user: User) => void;
@@ -40,7 +39,7 @@ const SignUpScreen: React.VFC<Props> = ({ onRegistered }) => {
       onSubmit={handleSubmit(async (values) => {
         try {
           const credential = await createUserWithEmailAndPassword(
-            getAuth(app),
+            auth,
             `${values.signUpUserId}@dummy.0xbd.cf`,
             values.signUpPassword
           );

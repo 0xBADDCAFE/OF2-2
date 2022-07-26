@@ -1,9 +1,14 @@
-import { getAuth, signOut, User } from "firebase/auth";
+import { connectAuthEmulator, getAuth, signOut, User } from "firebase/auth";
 import * as doc from "../firebase/firestore";
 import app from "./app";
 
+const auth = getAuth(app);
+if (import.meta.env.DEV) {
+  connectAuthEmulator(auth, "http://localhost:9099");
+}
+
 const onAuthStateChanged = (callback: (user: User | null) => void) =>
-  getAuth(app).onAuthStateChanged(async (user) => {
+  auth.onAuthStateChanged(async (user) => {
     if (user?.uid) {
       const docUser = await doc.getUser(user.uid);
       if (docUser === null || docUser.displayName !== user.displayName) {
@@ -20,6 +25,6 @@ const onAuthStateChanged = (callback: (user: User | null) => void) =>
     callback(user);
   });
 
-const signOutUser = () => signOut(getAuth(app));
+const signOutUser = () => signOut(auth);
 
-export { onAuthStateChanged, signOutUser };
+export { auth, onAuthStateChanged, signOutUser };

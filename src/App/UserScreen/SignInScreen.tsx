@@ -9,15 +9,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FirebaseError } from "firebase/app";
-import {
-  EmailAuthProvider,
-  getAuth,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import { useForm } from "react-hook-form";
-import app from "../../firebase/app";
+import { auth } from "../../firebase/auth";
 
 // Configure FirebaseUI.
 const uiConfig: firebaseui.auth.Config = {
@@ -27,7 +22,6 @@ const uiConfig: firebaseui.auth.Config = {
   // signInSuccessUrl: "/signedIn",
   // We will display Google and Facebook as auth providers.
   signInOptions: [
-    EmailAuthProvider.PROVIDER_ID,
     GoogleAuthProvider.PROVIDER_ID,
     // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
   ],
@@ -54,7 +48,7 @@ const SignInScreen: React.VFC<Props> = ({}) => {
         onSubmit={handleSubmit(async (values) => {
           try {
             await signInWithEmailAndPassword(
-              getAuth(app),
+              auth,
               `${values.signInUserId}@dummy.0xbd.cf`,
               values.signInPassword
             );
@@ -123,7 +117,7 @@ const SignInScreen: React.VFC<Props> = ({}) => {
       </form>
 
       <Box mt={8}>
-        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth(app)} />
+        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
       </Box>
     </>
   );

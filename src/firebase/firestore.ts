@@ -3,6 +3,7 @@ import {
   addDoc,
   collection,
   CollectionReference,
+  connectFirestoreEmulator,
   doc,
   DocumentData,
   DocumentReference,
@@ -26,6 +27,9 @@ export type DBRow<T> = T & { createdAt: Date };
 
 // Initialize Firebase
 const db = getFirestore(app);
+if (import.meta.env.DEV) {
+  connectFirestoreEmulator(db, "localhost", 8080);
+}
 
 const addScore = async (score: Score) => {
   try {

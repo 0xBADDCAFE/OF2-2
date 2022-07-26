@@ -15,11 +15,11 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FirebaseError } from "firebase/app";
-import { getAuth, updateProfile } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
 import "firebase/compat/auth";
 import { useCallback, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import app from "../../firebase/app";
+import { auth } from "../../firebase/auth";
 import * as doc from "../../firebase/firestore";
 import StyledButton from "../../shared/StyledButton";
 import { useUser } from "../hooks";
@@ -122,7 +122,7 @@ const UserScreen: React.VFC<Props> = () => {
         </StyledButton>
       </chakra.form>
       <chakra.hr mt={4} />
-      <StyledButton mt={4} onClick={() => getAuth(app).signOut()}>
+      <StyledButton mt={4} onClick={() => auth.signOut()}>
         Sign out
       </StyledButton>
     </Box>

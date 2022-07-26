@@ -11,9 +11,9 @@ const useUser = (): [User | null, Dispatch<SetStateAction<User | null>>] => {
   const [user, setUser] = useState<User | null>(loadedUser ?? null);
   useEffect(
     () =>
-      onAuthStateChanged((user) => {
+      onAuthStateChanged(async (newUser) => {
         // console.log(user);
-        setUser(user);
+        setUser(newUser);
       }),
     []
   );

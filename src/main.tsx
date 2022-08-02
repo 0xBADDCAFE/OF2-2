@@ -1,14 +1,17 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import React from "react";
 import ReactDOM from "react-dom";
+import { RecoilRoot } from "recoil";
 import App from "./App";
 import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ChakraProvider>
-      <App />
-    </ChakraProvider>
+    <RecoilRoot>
+      <ChakraProvider>
+        <App />
+      </ChakraProvider>
+    </RecoilRoot>
   </React.StrictMode>,
   document.getElementById("root")
 );

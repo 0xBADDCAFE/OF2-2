@@ -25,6 +25,9 @@ const Stopwatch: React.VFC<Props> = ({ isActive, onStop, ...styles }) => {
         startSet.current = null;
       }
     }
+    return () => {
+      if (startSet.current) clearInterval(startSet.current.tId);
+    };
   }, [isActive]);
 
   return (

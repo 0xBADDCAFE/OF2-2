@@ -1,12 +1,8 @@
 import { Box, Center, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { DocumentReference } from "firebase/firestore";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import produce from "immer";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { atom, useRecoilState } from "recoil";
 import { DBRow } from "../../firebase/firestore";
 import { subunion } from "../../function";
 import StyledButton from "../../shared/StyledButton";
@@ -21,44 +17,83 @@ type Props = {
   // user: firebase.User | null | undefined;
 };
 
+type PlayDetail = {
+  playState: PlayState;
+  score: {
+    count: number;
+    clicks: Click[];
+    numbers: number[];
+  };
+};
+
+const generateRandomIndexedArray = () => {
+  const xs = [...Array(25)].map((_, i) => i + 1);
+  for (let i = 0; i < xs.length; i++) {
+    const j = Math.ceil(Math.random() * (xs.length - i)) + i - 1;
+    [xs[i], xs[j]] = [xs[j], xs[i]];
+  }
+  return xs;
+};
+
+const playDetailState = atom<PlayDetail>({
+  key: "PlayDetail",
+  default: {
+    playState: "prepare",
+    score: {
+      count: 0,
+      clicks: [],
+      numbers: generateRandomIndexedArray(),
+    },
+  },
+});
+
 const PlayScreen: React.VFC<Props> = () => {
   const [user] = useUser();
-  const [playId, setPlayId] = useState(0); // generate by server
-  const [count, setCount] = useState(1);
-  const [clicks, setClicks] = useState<Click[]>([]);
-  const [playState, setPlayState] = useState<PlayState>("prepare");
+  const [playDetail, setPlayDetail] = useRecoilState(playDetailState);
+  // const [playId, setPlayId] = useState(0); // generate by server
+  // const [count, setCount] = useState(1);
+  // const [clicks, setClicks] = useState<Click[]>([]);
+  // const [playState, setPlayState] = useState<PlayState>("prepare");
   const [startAt, setStartAt] = useState<Date>(new Date());
   // Submit 直後はボタンコンポーネント側で disabled 表示に
   // したいので useState を使わない（= submit 時に更新しない）
   const scoreDocRef = useRef<DocumentReference<DBRow<Score>> | null>(null);
-  const numbers = useMemo(() => {
-    const xs = [...Array(25)].map((_, i) => i + 1);
-    for (let i = 0; i < xs.length; i++) {
-      const j = Math.ceil(Math.random() * (xs.length - i)) + i - 1;
-      [xs[i], xs[j]] = [xs[j], xs[i]];
-    }
-    return xs;
-  }, [playId]);
+  // const numbers = useMemo(() => {
+  //   const xs = [...Array(25)].map((_, i) => i + 1);
+  //   for (let i = 0; i < xs.length; i++) {
+  //     const j = Math.ceil(Math.random() * (xs.length - i)) + i - 1;
+  //     [xs[i], xs[j]] = [xs[j], xs[i]];
+  //   }
+  //   return xs;
+  // }, [playId]);
 
   const onClickCell = useCallback(
     (n: number, count: number) => (c: { x: number; y: number; at: number }) => {
-      if (n === count) {
-        setCount(n + 1);
-        if (n === 25) {
-          setPlayState("finish");
-          // userId is placeholder to share Score type with firestore
-          // Temporally disable local score because of avoid redundant with servers
-          // addScore({ userId: user?.uid ?? "", numbers, clicks });
-        }
-      }
+      setPlayDetail(
+        produce((draft) => {
+          // Update play detail
+          if (n === count) {
+            // setCount(n + 1);
+            draft.score.count++;
+            if (n === 25) {
+              // setPlayState("finish");
+              draft.playState = "finish";
+              // userId is placeholder to share Score type with firestore
+              // Temporally disable local score because of avoid redundant with servers
+              // addScore({ userId: user?.uid ?? "", numbers, clicks });
+            }
+          }
 
-      const click: Click = {
-        number: n,
-        x: c.x,
-        y: c.y,
-        time: c.at - startAt.getTime(),
-      };
-      setClicks((clicks) => [...clicks, click]);
+          const click: Click = {
+            number: n,
+            x: c.x,
+            y: c.y,
+            time: c.at - startAt.getTime(),
+          };
+          // setClicks((clicks) => [...clicks, click]);
+          draft.score.clicks.push(click);
+        })
+      );
     },
     [startAt]
   );
@@ -68,8 +103,8 @@ const PlayScreen: React.VFC<Props> = () => {
     Map<number, { x: number; y: number }[]>
   >(new Map());
   useEffect(() => {
-    if (playState === "replay") {
-      replayer.setReplay(clicks, (c) => {
+    if (playDetail.playState === "replay") {
+      replayer.setReplay(playDetail.score.clicks, (c) => {
         const numberPoints = replayPoints.get(c.number) ?? [];
         setReplayPoints(
           new Map(replayPoints.set(c.number, [...numberPoints, { ...c }]))
@@ -80,14 +115,28 @@ const PlayScreen: React.VFC<Props> = () => {
       setReplayPoints(new Map());
     }
     return replayer.clearReplay;
-  }, [playState]);
+  }, [playDetail.playState]);
+
+  useEffect(
+    () => () => {
+      setPlayDetail(
+        produce((draft) => {
+          // Cleanup
+          if (draft.playState === "playing" || scoreDocRef.current !== null) {
+            draft.playState = "stop";
+          }
+        })
+      );
+    },
+    []
+  );
 
   return (
     <>
       <Flex mt={8} justifyContent="space-between">
         <Stopwatch
           ms={2}
-          isActive={playState === "playing"}
+          isActive={playDetail.playState === "playing"}
           onStop={(count) => {
             console.log(count);
           }}
@@ -96,34 +145,53 @@ const PlayScreen: React.VFC<Props> = () => {
           <StyledButton
             me={4}
             onClick={() => {
-              if (playState === "playing") {
-                setPlayState("stop");
-              } else {
-                setCount(1);
-                setClicks([]);
-                setPlayId(playId + 1);
-                setPlayState("playing");
+              setPlayDetail(
+                produce((draft) => {
+                  if (playDetail.playState === "playing") {
+                    // setPlayState("stop");
+                    draft.playState = "stop";
+                  } else {
+                    // setCount(1);
+                    // setClicks([]);
+                    // setPlayId(playId + 1);
+                    // setPlayState("playing");
+                    draft.score.count = 1;
+                    draft.score.clicks = [];
+                    draft.score.numbers = generateRandomIndexedArray();
+                    draft.playState = "playing";
+                  }
+                })
+              );
+              if (playDetail.playState !== "playing") {
                 setStartAt(new Date());
                 scoreDocRef.current = null;
               }
             }}
           >
-            {playState === "playing" ? "Stop" : "Start"}
+            {playDetail.playState === "playing" ? "Stop" : "Start"}
           </StyledButton>
           <StyledButton
             me={2}
             disabled={
-              !subunion<PlayState>("replay", "finish").includes(playState)
+              !subunion<PlayState>("replay", "finish").includes(
+                playDetail.playState
+              )
             }
             onClick={() => {
-              if (playState !== "replay") {
-                setPlayState("replay");
-              } else {
-                setPlayState("finish");
-              }
+              setPlayDetail(
+                produce((draft) => {
+                  if (playDetail.playState !== "replay") {
+                    // setPlayState("replay");
+                    draft.playState = "replay";
+                  } else {
+                    // setPlayState("finish");
+                    draft.playState = "finish";
+                  }
+                })
+              );
             }}
           >
-            {playState !== "replay" ? "Replay" : "Stop"}
+            {playDetail.playState !== "replay" ? "Replay" : "Stop"}
           </StyledButton>
         </Center>
       </Flex>
@@ -138,18 +206,20 @@ const PlayScreen: React.VFC<Props> = () => {
         boxSizing="border-box"
       >
         <SimpleGrid h="100%" w="100%" columns={5} gap={0.5} userSelect="none">
-          {numbers.map((n) => (
+          {playDetail.score.numbers.map((n) => (
             <NumberCell
               key={n}
               n={n}
-              count={count}
-              playState={playState}
+              count={playDetail.score.count}
+              playState={playDetail.playState}
               replayPoints={replayPoints.get(n) ?? null}
-              onClick={onClickCell(n, count)}
+              onClick={onClickCell(n, playDetail.score.count)}
             />
           ))}
         </SimpleGrid>
-        {subunion<PlayState>("playing", "replay").includes(playState) ? null : (
+        {subunion<PlayState>("playing", "replay").includes(
+          playDetail.playState
+        ) ? null : (
           <Center
             w="100%"
             h="100%"
@@ -165,12 +235,11 @@ const PlayScreen: React.VFC<Props> = () => {
             {user ? (
               <ResultSubmitButton
                 score={
-                  playState === "finish" && !scoreDocRef.current
+                  playDetail.playState === "finish" && !scoreDocRef.current
                     ? {
                         userId: user.uid,
-                        numbers,
-                        clicks,
-                        finishTime: clicks.slice(-1)[0].time,
+                        finishTime: playDetail.score.clicks.slice(-1)[0].time,
+                        ...playDetail.score,
                       }
                     : null
                 }

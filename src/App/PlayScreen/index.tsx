@@ -2,9 +2,10 @@ import { Box, Center, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { DocumentReference } from "firebase/firestore";
 import produce from "immer";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { atom, useRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { DBRow } from "../../firebase/firestore";
-import { subunion } from "../../function";
+import { generateRandomIndexedArray, subunion } from "../../function";
+import { playDetailState } from "../../recoil/atoms";
 import StyledButton from "../../shared/StyledButton";
 import StyledLink from "../../shared/StyledLink";
 import { useUser } from "../hooks";
@@ -16,36 +17,6 @@ import NumberCell from "./NumberCell";
 type Props = {
   // user: firebase.User | null | undefined;
 };
-
-type PlayDetail = {
-  playState: PlayState;
-  score: {
-    count: number;
-    clicks: Click[];
-    numbers: number[];
-  };
-};
-
-const generateRandomIndexedArray = () => {
-  const xs = [...Array(25)].map((_, i) => i + 1);
-  for (let i = 0; i < xs.length; i++) {
-    const j = Math.ceil(Math.random() * (xs.length - i)) + i - 1;
-    [xs[i], xs[j]] = [xs[j], xs[i]];
-  }
-  return xs;
-};
-
-const playDetailState = atom<PlayDetail>({
-  key: "PlayDetail",
-  default: {
-    playState: "prepare",
-    score: {
-      count: 0,
-      clicks: [],
-      numbers: generateRandomIndexedArray(),
-    },
-  },
-});
 
 const PlayScreen: React.VFC<Props> = () => {
   const [user] = useUser();

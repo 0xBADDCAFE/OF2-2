@@ -4,9 +4,15 @@ import React, { useEffect, useRef, useState } from "react";
 type Props = {
   isActive: boolean;
   onStop: (count: number) => void;
+  setTimeMs: number;
 } & React.ComponentProps<typeof Center>;
-const Stopwatch: React.VFC<Props> = ({ isActive, onStop, ...styles }) => {
-  const [time, setTime] = useState(0);
+const Stopwatch: React.VFC<Props> = ({
+  isActive,
+  onStop,
+  setTimeMs,
+  ...styles
+}) => {
+  const [time, setTime] = useState(setTimeMs);
   const startSet = useRef<{ from: Date; tId: NodeJS.Timer } | null>(null);
   useEffect(() => {
     if (isActive) {

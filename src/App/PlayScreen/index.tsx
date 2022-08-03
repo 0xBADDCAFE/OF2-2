@@ -106,7 +106,8 @@ const PlayScreen: React.VFC<Props> = () => {
     <>
       <Flex mt={8} justifyContent="space-between">
         <Stopwatch
-          ms={2}
+          marginStart={2}
+          setTimeMs={playDetail.score.clicks.slice(-1)[0]?.time ?? 0}
           isActive={playDetail.playState === "playing"}
           onStop={(count) => {
             console.log(count);

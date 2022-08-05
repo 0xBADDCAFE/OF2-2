@@ -128,7 +128,7 @@ const UserScreen: React.VFC<Props> = () => {
     </Box>
   ) : (
     <Box mt={8}>
-      <Heading size="md" color="gray.600">
+      <Heading ms={2} me={2} size="md" color="gray.600">
         サインインまたはサインアップで結果を送信
       </Heading>
       <Tabs mt={2} isFitted>

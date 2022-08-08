@@ -1,5 +1,6 @@
 /src/firebase/config.ts
 /.firebaserc
+/dev-dist
 
 # Yarn v3
 .yarn/

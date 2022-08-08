@@ -38,6 +38,7 @@ const LeaderboardScreen = () => {
     })();
   }, [page]);
 
+  // TODO: submitted time
   return (
     <Box mt={8} ms={4} me={4}>
       <TableContainer>
